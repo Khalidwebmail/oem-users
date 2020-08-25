@@ -13,16 +13,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('users/', function () {
-    return view('welcome');
+Route::post('login', 'API\V1\AuthController@login');
+Route::post('forgot-password', 'API\V1\UserController@forgotPassword');
+Route::post('password-reset/{email}/{token}', 'API\V1\UserController@passwordReset');
+Route::post('verify/{email}/{token}', 'API\V1\UserController@verify');
+
+Route::post('register', 'API\V1\AuthController@register');
+Route::post('register/{email}/{token}', 'API\V1\AuthController@completeRegistration');
+
+//AUTH ROUTE
+Route::middleware('api')->group(function () {
+    Route::post('refresh', 'API\V1\AuthController@refresh');
+
+    Route::post('change-password/{userId}', 'API\V1\UserController@changePassword');
+
+    // password reset
+
+    // social media authentication
+
+    Route::post('logout', 'API\V1\AuthController@logout');
+
+    // User management Route
+    Route::apiResource('users', 'API\V1\UserController');
+    Route::patch('/users/{user}/active', 'API\V1\UserController@active');
+    Route::patch('/users/{user}/suspend', 'API\V1\UserController@suspend');
+    Route::post('/users/{user}/role', 'API\V1\UserController@assignRole');
+    Route::post('/users/{user}/permission', 'API\V1\UserController@assignPermission');
 });
 
-
-Route::group(['prefix' => 'users', 'middleware' => 'api'], function () {
-    Route::post('signup', 'AuthController@signup');
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+Route::fallback(function () {
+    return response()->json(['message' => 'Not Found.'], 404);
 });
-
