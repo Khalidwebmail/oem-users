@@ -6,6 +6,8 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use Exception;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\Redis;
@@ -100,12 +102,17 @@ class UserController extends BaseController
      * @param  \App\User $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($user)
     {
+        $user = User::find($user);
+        if(! $user) {
+            return response()->json(['error' => 'This user does not exists'], 404);
+        }
         $user->delete();
 
         return response()->json(['message' => 'User Deletion Successful!'], 200);
     }
+
 
     /**
      * Active specified resource.
