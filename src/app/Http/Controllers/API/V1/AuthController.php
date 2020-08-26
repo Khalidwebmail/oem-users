@@ -5,12 +5,18 @@ namespace App\Http\Controllers\API\V1;
 use App\User;
 use Validator;
 use Carbon\Carbon;
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends BaseController
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api')->except(['signup', 'login']);
+    }
 
     public function register(Request $request)
     {
@@ -47,13 +53,13 @@ class AuthController extends BaseController
         if (!$user) {
             return $this->sendError('User not found', 'Bad Request', 400);
         }
-        
+
         //ACTIVATE USER
         $user->is_email_verified = true;
         $user->email_verified_at = Carbon::now();
         $user->status = User::STATUS_ACTIVE;
         $user->save();
-        
+
         Redis::publish(env('CHANNEL_PREFIX').'registration.complete', $user);
 
         return $this->sendResponse([], "Registration successful.");
@@ -83,6 +89,16 @@ class AuthController extends BaseController
         $data['user'] = auth()->user();
         return $this->sendResponse($data, 'User login successfully.', Response::HTTP_OK);
 
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        return response()->json(auth()->user());
     }
 
     /**

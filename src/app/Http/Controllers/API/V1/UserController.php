@@ -14,16 +14,18 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UserController extends BaseController
 {
+
     public function __construct()
     {
+        // $this->middleware('auth:api')->except(['signup', 'login']);
     }
 
     public function index(Request $request)
     {
         $paginate = $request->has('paginate') && intval($request->paginate) > 0 ? intval($request->paginate) : 10;
-      
+
         $users = User::paginate($paginate);
-      
+
         return JsonResource::collection($users);
     }
 
@@ -35,7 +37,7 @@ class UserController extends BaseController
      */
     public function store(UserRequest $request)
     {
-        
+
         // Retrieve the validated input data...
         $validated = $request->validated();
 
@@ -60,9 +62,7 @@ class UserController extends BaseController
      */
     public function show($user)
     {
-        $user = User::with(['meta' => function ($q) {
-            return $q->where('is_hidden', false);
-        }])->findOrFail($user);
+        $user = User::findOrfail($user);
 
         return new JsonResource($user);
     }
@@ -174,7 +174,7 @@ class UserController extends BaseController
         $user->email_verified_at = Carbon::now();
         $user->status = User::STATUS_ACTIVE;
         $user->save();
-        
+
         Redis::publish(env('CHANNEL_PREFIX').'email.verified', $user);
 
         return response()->json(["success" => true], 200);
@@ -259,7 +259,7 @@ class UserController extends BaseController
 
         return response()->json(["success" => true], 200);
     }
-    
+
     public function passwordReset(Request $request, $email, $token)
     {
         //FIND USER DETAILS
@@ -282,7 +282,7 @@ class UserController extends BaseController
         $user->password = bcrypt(request()->password);
         $user->last_password_reset_at = Carbon::now();
         $user->save();
-        
+
         Redis::publish(env('CHANNEL_PREFIX').'password.reset.done', $user);
 
         return response()->json(["success" => true], 200);

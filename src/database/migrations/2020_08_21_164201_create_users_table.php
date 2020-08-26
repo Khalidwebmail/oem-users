@@ -39,6 +39,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('last_password_reset_at')->nullable();
             $table->timestamp('last_sign_in_at')->nullable();
             $table->softDeletes();
+            $table->rememberToken();
             $table->timestamps();
         });
     }
