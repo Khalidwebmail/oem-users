@@ -47,6 +47,7 @@ Route::group(['prefix' => 'users'], function () {
 
         // Role and permission management
         Route::apiResource('roles', 'API\V1\RoleController');
+        Route::apiResource('permissions', 'API\V1\PermissionController');
     });
 
     Route::fallback(function () {

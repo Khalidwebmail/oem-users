@@ -5,10 +5,10 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\Permission\Models\Permission;
 use Symfony\Component\HttpFoundation\Response;
-use Spatie\Permission\Models\Role;
 
-class RoleController extends BaseController
+class PermissionController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +17,9 @@ class RoleController extends BaseController
      */
     public function index()
     {
-        $roles = Role::all();
+        $permissions = Permission::all();
 
-        return new JsonResource($roles);
+        return new JsonResource($permissions);
     }
 
     /**
@@ -31,8 +31,9 @@ class RoleController extends BaseController
     public function store(Request $request)
     {
         $data = $request->all();
-        Role::create($data);
-        return $this->sendResponse(['message' => 'Created'], Response::HTTP_CREATED);
+        Permission::create($data);
+
+        return response()->json(['message' => 'Permission created'], Response::HTTP_CREATED);
     }
 
     /**
@@ -43,8 +44,8 @@ class RoleController extends BaseController
      */
     public function show($id)
     {
-        $role = Role::findOrFail($id);
-        return new JsonResource($role);
+        $permission = Permission::findOrFail($id);
+        return new JsonResource($permission);
     }
 
     /**
@@ -54,15 +55,15 @@ class RoleController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, Permission $permission)
     {
         $data = $request->all();
 
-        $role->update($data);
+        $permission->update($data);
 
-        $role->refresh();
+        $permission->refresh();
 
-        return new JsonResource($role);
+        return new JsonResource($permission);
     }
 
     /**
@@ -71,16 +72,16 @@ class RoleController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($role)
+    public function destroy($permission)
     {
-        $role = Role::find($role);
+        $permission = Permission::find($permission);
 
-        if(! $role) {
-            return response()->json(['error' => 'This role does not exists'], 404);
+        if(! $permission) {
+            return response()->json(['error' => 'This permission does not exists'], 404);
         }
 
-        $role->delete();
+        $permission->delete();
 
-        return response()->json(['message' => 'Role Deletion Successful!'], 200);
+        return response()->json(['message' => 'Permission deletion Successful!'], 200);
     }
 }
