@@ -44,6 +44,9 @@ Route::group(['prefix' => 'users'], function () {
         Route::patch('/users/{user}/suspend', 'API\V1\UserController@suspend');
         Route::post('/users/{user}/role', 'API\V1\UserController@assignRole');
         Route::post('/users/{user}/permission', 'API\V1\UserController@assignPermission');
+
+        // Role and permission management
+        Route::apiResource('roles', 'API\V1\RoleController');
     });
 
     Route::fallback(function () {
