@@ -14,7 +14,6 @@ class RoleAssignRequest extends BaseFormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required',
             'roles' => 'required'
         ];
     }

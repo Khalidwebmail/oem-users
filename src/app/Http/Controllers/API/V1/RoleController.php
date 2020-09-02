@@ -85,11 +85,18 @@ class RoleController extends BaseController
         return response()->json(['message' => 'Role Deletion Successful!'], 200);
     }
 
-    public function assign(RoleAssignRequest $request)
+    public function assign(RoleAssignRequest $request, User $user)
     {
-        $user = User::findOrFail($request->user_id);
         $roles = stristr($request->roles, ',') ? explode(',', $request->roles) : $request->roles;
         $user->syncRoles($roles);
+
+        return response()->json(['message' => 'Operation successful!'], 200);
+    }
+
+    public function assignPermissionViaRole(Request $request, Role $role)
+    {
+        $permissions = stristr($request->permissions, ',') ? explode(',', $request->permissions) : $request->permissions;
+        $role->syncPermissions($permissions);
 
         return response()->json(['message' => 'Operation successful!'], 200);
     }

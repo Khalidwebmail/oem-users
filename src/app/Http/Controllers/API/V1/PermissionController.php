@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PermissionAssignRequest;
+use App\Http\Requests\PermissionRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -86,11 +88,10 @@ class PermissionController extends BaseController
         return response()->json(['message' => 'Permission deletion Successful!'], 200);
     }
 
-    public function assign(Request $request)
+    public function assign(PermissionAssignRequest $request, User $user)
     {
-        $user = User::findOrFail($request->user_id);
         $permissions = stristr($request->permissions, ',') ? explode(',', $request->permissions) : $request->permissions;
-        $user->syncpermissions($permissions);
+        $user->syncPermissions($permissions);
 
         return response()->json(['message' => 'Operation successful!'], 200);
     }

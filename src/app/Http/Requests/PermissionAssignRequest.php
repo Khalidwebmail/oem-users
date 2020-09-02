@@ -14,7 +14,6 @@ class PermissionAssignRequest extends BaseFormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required',
             'permissions' => 'required'
         ];
     }
