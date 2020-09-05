@@ -47,7 +47,12 @@ Route::group(['prefix' => 'users'], function () {
 
         // Role and permission management
         Route::apiResource('roles', 'API\V1\RoleController');
+        Route::post('{user}/roles/assign', "API\V1\RoleController@assign");
+        Route::post('{role}/permission/assign', "API\V1\RoleController@assignPermissionViaRole");
+
         Route::apiResource('permissions', 'API\V1\PermissionController');
+        Route::post('{user}/permissions/assign', "API\V1\PermissionController@assign");
+
     });
 
     Route::fallback(function () {

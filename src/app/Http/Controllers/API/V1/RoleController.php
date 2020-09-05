@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RoleAssignRequest;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +20,6 @@ class RoleController extends BaseController
     public function index()
     {
         $roles = Role::all();
-
         return new JsonResource($roles);
     }
 
@@ -82,5 +83,21 @@ class RoleController extends BaseController
         $role->delete();
 
         return response()->json(['message' => 'Role Deletion Successful!'], 200);
+    }
+
+    public function assign(RoleAssignRequest $request, User $user)
+    {
+        $roles = stristr($request->roles, ',') ? explode(',', $request->roles) : $request->roles;
+        $user->syncRoles($roles);
+
+        return response()->json(['message' => 'Operation successful!'], 200);
+    }
+
+    public function assignPermissionViaRole(Request $request, Role $role)
+    {
+        $permissions = stristr($request->permissions, ',') ? explode(',', $request->permissions) : $request->permissions;
+        $role->syncPermissions($permissions);
+
+        return response()->json(['message' => 'Operation successful!'], 200);
     }
 }
