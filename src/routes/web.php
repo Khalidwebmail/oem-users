@@ -13,51 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'users'], function () {
-
-    Route::post('login', 'API\V1\AuthController@login');
-    Route::post('logout', 'API\V1\AuthController@logout');
-    Route::get('me', 'API\V1\AuthController@me');
-
-    Route::post('forgot-password', 'API\V1\UserController@forgotPassword');
-    Route::post('password-reset/{email}/{token}', 'API\V1\UserController@passwordReset');
-    Route::post('verify/{email}/{token}', 'API\V1\UserController@verify');
-
-    Route::post('register', 'API\V1\AuthController@register');
-    Route::post('register/{email}/{token}', 'API\V1\AuthController@completeRegistration');
-
-//AUTH ROUTE
-    Route::middleware('api')->group(function () {
-        Route::post('refresh', 'API\V1\AuthController@refresh');
-
-        Route::post('change-password/{userId}', 'API\V1\UserController@changePassword');
-
-        // password reset
-
-        // social media authentication
-
-        Route::post('logout', 'API\V1\AuthController@logout');
-
-        // User management Route
-        Route::apiResource('users', 'API\V1\UserController');
-        Route::patch('/users/{user}/active', 'API\V1\UserController@active');
-        Route::patch('/users/{user}/suspend', 'API\V1\UserController@suspend');
-        Route::post('/users/{user}/role', 'API\V1\UserController@assignRole');
-        Route::post('/users/{user}/permission', 'API\V1\UserController@assignPermission');
-
-        // Role and permission management
-        Route::apiResource('roles', 'API\V1\RoleController');
-        Route::post('{user}/roles/assign', "API\V1\RoleController@assign");
-        Route::post('{role}/permission/assign', "API\V1\RoleController@assignPermissionViaRole");
-
-        Route::apiResource('permissions', 'API\V1\PermissionController');
-        Route::post('{user}/permissions/assign', "API\V1\PermissionController@assign");
-
-    });
-
-    Route::fallback(function () {
-        return response()->json(['message' => 'Not Found.'], 404);
-    });
+Route::get('users/', function () {
+    return view('welcome');
 });
-
-
